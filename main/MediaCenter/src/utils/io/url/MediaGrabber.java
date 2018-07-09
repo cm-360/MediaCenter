@@ -54,7 +54,9 @@ public class MediaGrabber {
 			try {
 				String html = HTMLGrabber.grab(site);
 				Matcher urlMatcher = Pattern
-						.compile("(?:https?:\\/\\/)(?:(?:[\\w-]+\\.)+\\w+)(?:\\/[\\w-]+)+(?:\\.\\w+)+").matcher(html);
+						.compile(
+								"(?:https?:\\/\\/)(?:(?:[\\w-]+\\.)+[\\w-]+)(?:\\/[\\w-]+)+(?:\\.[\\w-]+)+(?:\\?(?:[\\w-]+(?:=[\\w-]+&?)?)+)?")
+						.matcher(html);
 				// Construct a list of recognized file extensions
 				HashSet<String> exts = new HashSet<String>();
 				for (JComponent p : lib.getMediaPlayers().getComponents().values())
@@ -62,18 +64,28 @@ public class MediaGrabber {
 						exts.addAll(Arrays.asList(((PlayerPanel) p).getSupportedExtensions()));
 				while (urlMatcher.find()) {
 					try {
-						String group = urlMatcher.group(), ext = group.substring(group.lastIndexOf(".") + 1);
 						// Make sure the file to download has a recognized extension
-						for (String e : exts)
-							if (ext.toLowerCase().matches(e)) {
-								String title = StringUtils
-										.toTitleCase(
-												group.substring(group.lastIndexOf("/") + 1, group.lastIndexOf(".")))
-										+ group.substring(group.lastIndexOf("."));
-								HashMap<String, Object> tags = guessTags(lib, title);
-								results.add(new MediaURL(new URL(group), title, tags));
-								break;
-							}
+						String group = urlMatcher.group(), ext = group.substring(group.lastIndexOf(".") + 1);
+						Matcher extMatcher = Pattern.compile("\\w+").matcher(ext);
+						if (extMatcher.find()) {
+							ext = extMatcher.group();
+							for (String e : exts)
+								if (ext.toLowerCase().matches(e)) {
+									// Uses the html <title> tag and the filename as final title
+									String title = "";
+									Matcher titleMatcher = Pattern.compile("(?<=<title>)[^<>]+(?=<\\/title>)")
+											.matcher(html);
+									if (titleMatcher.find())
+										title += titleMatcher.group().replaceAll("[^\\w\\s]", "");
+									title += (" - "
+											+ StringUtils.toTitleCase(
+													group.substring(group.lastIndexOf("/") + 1, group.lastIndexOf(".")))
+											+ group.substring(group.lastIndexOf(".")));
+									HashMap<String, Object> tags = guessTags(lib, title);
+									results.add(new MediaURL(new URL(group), title, tags));
+									break;
+								}
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
