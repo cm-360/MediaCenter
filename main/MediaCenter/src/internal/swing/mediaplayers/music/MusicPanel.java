@@ -1,4 +1,4 @@
-package internal.swing.mediaplayers;
+package internal.swing.mediaplayers.music;
 
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -8,6 +8,7 @@ import java.io.File;
 
 import javax.swing.JPanel;
 
+import internal.swing.mediaplayers.PlayerPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import utils.graphics.ImageTools;

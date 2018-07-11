@@ -1,4 +1,4 @@
-package internal.swing.mediaplayers;
+package internal.swing.mediaplayers.image;
 
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+import internal.swing.mediaplayers.PlayerPanel;
 import utils.graphics.ImageTools;
 import utils.graphics.ImageTools.ScaleMode;
 import utils.io.file.Download;

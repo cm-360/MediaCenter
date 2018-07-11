@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import internal.swing.mediaplayers.MusicPanel;
 import internal.swing.mediaplayers.PlayerPanel;
-import internal.swing.mediaplayers.VideoPanel;
+import internal.swing.mediaplayers.music.MusicPanel;
+import internal.swing.mediaplayers.video.VideoPanel;
 import utils.io.file.MediaFile;
 import utils.swing.ComponentMap;
 

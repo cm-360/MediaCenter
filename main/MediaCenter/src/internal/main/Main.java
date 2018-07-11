@@ -51,10 +51,10 @@ import javax.swing.event.ChangeListener;
 
 import internal.swing.guis.applets.grabber.GrabberGUI;
 import internal.swing.guis.popups.BooleanPrompt;
-import internal.swing.mediaplayers.ImagePanel;
-import internal.swing.mediaplayers.MusicPanel;
 import internal.swing.mediaplayers.PlayerPanel;
-import internal.swing.mediaplayers.VideoPanel;
+import internal.swing.mediaplayers.image.ImagePanel;
+import internal.swing.mediaplayers.music.MusicPanel;
+import internal.swing.mediaplayers.video.VideoPanel;
 import internal.utils.library.Library;
 import internal.utils.library.Playlist;
 import javafx.embed.swing.JFXPanel;
@@ -210,7 +210,7 @@ public class Main {
 				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) { // Enter
 					playlist.stop();
 					playlist.removeAll().add(listLibraryViewResults.getSelectedValue()).play();
-					if (((Component) playlist.getCurrentPlayer()).getName().toLowerCase().equals("image"))
+					if (!((Component) playlist.getCurrentPlayer()).getName().toLowerCase().equals("music"))
 						tabs.setSelectedComponent(panelContent);
 				}
 			}
@@ -221,7 +221,7 @@ public class Main {
 				if (arg0.getClickCount() == 2) { // Double-click
 					playlist.stop();
 					playlist.removeAll().add(listLibraryViewResults.getSelectedValue()).play();
-					if (((Component) playlist.getCurrentPlayer()).getName().toLowerCase().equals("image"))
+					if (!((Component) playlist.getCurrentPlayer()).getName().toLowerCase().equals("music"))
 						tabs.setSelectedComponent(panelContent);
 				}
 			}
@@ -237,10 +237,8 @@ public class Main {
 		lblName.setHorizontalTextPosition(SwingConstants.CENTER);
 		
 		JLabel lblTitle = new JLabel("Title");
-		lblTitle.setName("");
 		
 		JLabel lblAuthor = new JLabel("Author");
-		lblAuthor.setName("");
 		
 		JLabel lblRating = new JLabel("Rating");
 		
@@ -484,7 +482,7 @@ public class Main {
 					for (MediaFile m : listLibraryViewResults.getSelectedValuesList())
 						playlist.add(m);
 					playlist.play();
-					if (((Component) playlist.getCurrentPlayer()).getName().toLowerCase().equals("image"))
+					if (!((Component) playlist.getCurrentPlayer()).getName().toLowerCase().equals("music"))
 						tabs.setSelectedComponent(panelContent);
 				}
 			});
