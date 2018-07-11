@@ -4,6 +4,8 @@ import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -30,11 +32,14 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 	private Container parent;
 	
 	private JFXPanel fxPanel;
-	private MediaPlayer player;
+	private Media fxMedia;
+	private MediaPlayer fxPlayer;
+	private MediaView fxView;
+	private Scene fxScene;
 	
-	private boolean sysDefault = true; // TODO read this from options
+	private boolean sysDefault = false; // TODO read this from options
 	
-	public VideoPanel(CardLayout cl, Container parent) {
+	public VideoPanel(CardLayout cl, final Container parent) {
 		this.cl = cl;
 		this.parent = parent;
 		final File extFile = new File(System.getProperty("user.dir") + "/config/mediaplayers/video/extensions.txt");
@@ -55,6 +60,16 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 			}
 		}
 		add(fxPanel = new JFXPanel());
+		parent.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				if (fxMedia != null)
+					if (fxMedia.getHeight() / parent.getHeight() > 1)
+						fxView.fitHeightProperty().bind(fxScene.heightProperty());
+					else
+						fxView.fitWidthProperty().bind(fxScene.widthProperty());
+			}
+		});
 	}
 	
 	@Override
@@ -74,17 +89,22 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 				}
 			}
 		} else {
-			try {
-				MediaView mv = new MediaView(player = new MediaPlayer(new Media(m.getFilePath().toURI().toURL().toString())));
-				Scene scene;
-				fxPanel.setScene(scene = new Scene(new Group(mv), parent.getWidth(), parent.getHeight()));
-				mv.fitWidthProperty().bind(scene.widthProperty());
-				mv.fitHeightProperty().bind(scene.heightProperty());
-				mv.setPreserveRatio(true);
-				player.play();
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (m != null) {
+				fxMedia = new Media(m.getFilePath().toURI().toString());
+				if (fxPlayer == null || fxMedia.getSource() != fxPlayer.getMedia().getSource()) // Play a new file
+					try {
+						fxView = new MediaView(fxPlayer = new MediaPlayer(fxMedia));
+						fxPanel.setScene(fxScene = new Scene(new Group(fxView), parent.getWidth(), parent.getHeight()));
+						if (fxMedia.getHeight() / parent.getHeight() > 1)
+							fxView.fitHeightProperty().bind(fxScene.heightProperty());
+						else
+							fxView.fitWidthProperty().bind(fxScene.widthProperty());
+						fxView.setPreserveRatio(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					} 
 			}
+			fxPlayer.play();
 		}
 		// Show panel when done
 		cl.show(parent, "video");
@@ -92,27 +112,31 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 
 	@Override
 	public void pause() {
-		player.pause();
+		fxPlayer.pause();
 	}
 
 	@Override
 	public void stop() {
-		player.stop();
+		fxPlayer.stop();
 	}
 	
 	public void setVolume(double percent) {
-		player.setVolume(percent);
+		fxPlayer.setVolume(percent);
 	}
 	
 	// Status methods
 	@Override
 	public boolean isPaused() {
-		return false;
+		if (isStopped())
+			return false;
+		else
+			return fxPlayer.getStatus() == MediaPlayer.Status.PAUSED;
 	}
 
 	@Override
 	public boolean isStopped() {
-		return true;
+		return fxPlayer == null || (fxPlayer.getStatus() == MediaPlayer.Status.STOPPED
+				|| fxPlayer.getStatus() == MediaPlayer.Status.HALTED);
 	}
 	
 	// Access methods

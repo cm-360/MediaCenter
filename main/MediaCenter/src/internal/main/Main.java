@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -354,6 +355,7 @@ public class Main {
 		VideoPanel panelContentVideo = new VideoPanel(cl_panelContent, panelContent);
 		panelContentVideo.setName("video");
 		panelContent.add(panelContentVideo, "video");
+		panelContentVideo.setLayout(new BoxLayout(panelContentVideo, BoxLayout.X_AXIS));
 		tabs.setEnabledAt(1, true);
 		
 		JPanel panelControls = new JPanel();
