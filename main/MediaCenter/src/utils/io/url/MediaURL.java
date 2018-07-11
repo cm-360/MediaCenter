@@ -49,7 +49,8 @@ public class MediaURL implements Comparable<MediaURL> {
 			} else
 				name += (" [" + imageQuality + "]");
 		}
-		return name;
+		return name
+				+ (filename.contains(".") ? String.format(" (%s)", filename.substring(filename.lastIndexOf("."))) : "");
 	}
 	
 	public void setFilename(String name) {
