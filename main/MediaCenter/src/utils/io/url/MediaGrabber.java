@@ -103,7 +103,6 @@ public class MediaGrabber {
 			for (File f : FileSearcher.listFiles(file, new EverythingFilter(), true)) {
 				if (new MediaFilter().accept(file)) // Media file
 					try {
-						System.out.println("accept");
 						URL fUrl = f.toURI().toURL();
 						File tagFile = new File(f.toString().replaceAll("\\.[^\\\\\\/\\.]+$", ".json"));
 						String fileName = f.getName();
