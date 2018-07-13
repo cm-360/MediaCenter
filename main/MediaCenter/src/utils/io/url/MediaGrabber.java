@@ -2,6 +2,7 @@ package utils.io.url;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +24,7 @@ import utils.applets.grabber.DomainGrabber;
 import utils.io.DownloadManager;
 import utils.io.file.FileSearcher;
 import utils.io.file.MediaFile;
-import utils.io.file.filters.JARFilter;
-import utils.io.file.filters.MediaFilter;
+import utils.io.file.filters.*;
 import utils.io.file.text.TextReader;
 import utils.strings.StringUtils;
 
@@ -99,25 +99,51 @@ public class MediaGrabber {
 	
 	public ArrayList<MediaURL> search(File file) {
 		ArrayList<MediaURL> results = new ArrayList<MediaURL>();
-		File dir = file.isDirectory() ? file : file.getParentFile();
-		for (File f : FileSearcher.listFiles(dir, new MediaFilter(), true)) {
-			try {
-				URL fUrl = f.toURI().toURL();
-				File tagFile = new File(f.toString().replaceAll("\\.[^\\\\\\/\\.]+$", ".json"));
-				String fileName = f.getName();
-				if (!tagFile.exists())
-					results.add(new MediaURL(fUrl, fileName, guessTags(lib, fileName)));
-				else {
-					// Read tags from file
-					TextReader jsonReader = new TextReader(tagFile);
-					Gson gson = new GsonBuilder().setPrettyPrinting().create();
-					@SuppressWarnings("unchecked")
-					HashMap<String, Object> importTags = gson.fromJson(jsonReader.read(), HashMap.class);
-					results.add(new MediaURL(fUrl, fileName, importTags));
+		if (file.isDirectory()) { // Search directory for files
+			for (File f : FileSearcher.listFiles(file, new EverythingFilter(), true)) {
+				if (new MediaFilter().accept(file)) // Media file
+					try {
+						System.out.println("accept");
+						URL fUrl = f.toURI().toURL();
+						File tagFile = new File(f.toString().replaceAll("\\.[^\\\\\\/\\.]+$", ".json"));
+						String fileName = f.getName();
+						if (!tagFile.exists())
+							results.add(new MediaURL(fUrl, fileName, guessTags(lib, fileName)));
+						else {
+							// Read tags from file
+							TextReader jsonReader = new TextReader(tagFile);
+							Gson gson = new GsonBuilder().setPrettyPrinting().create();
+							@SuppressWarnings("unchecked")
+							HashMap<String, Object> importTags = gson.fromJson(jsonReader.read(), HashMap.class);
+							results.add(new MediaURL(fUrl, fileName, importTags));
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				else { // File containing more URLs
+					results.addAll(search(f));
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			} 
+		} else { // Search text file for entries
+			String fText = new TextReader(file).read();
+			String fName = file.getName().toLowerCase();
+			if (fName.endsWith(".url")) { // Internet shortcut
+				Matcher urlMatcher = Pattern.compile("(?<=URL=)[^\\n\\r]+").matcher(fText);
+				while (urlMatcher.find())
+					try {
+						results.addAll(search(new URL(urlMatcher.group())));
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+			} else if (fName.endsWith(".txt")) { // Text file
+				String[] lines = fText.replaceAll("\r", "").split("\\n");
+				for (String l : lines)
+					try {
+						results.addAll(search(new URL(l)));
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+			}
 		}
 		return results;
 	}
@@ -156,6 +182,10 @@ public class MediaGrabber {
 		this.lib = lib;
 		for (DomainGrabber d : grabbers)
 			d.setLibrary(lib);
+	}
+	
+	public Library getLibrary() {
+		return lib;
 	}
 	
 	public DownloadManager getDownloadManager() {

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,13 +114,15 @@ public class GrabberGUI extends MediaCenterApplet {
 		JButton btnImport = new JButton("Import");
 		btnImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				final TextPrompt tp = new TextPrompt("Import From Folders");
+				final TextPrompt tp = new TextPrompt("Import From Files");
 				tp.getOKButton().addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						ArrayList<MediaURL> results = new ArrayList<MediaURL>();
 						String[] fileStrings = tp.getText().split("\\n"); // Separate by line
-						for (String fs : fileStrings)
-							results.addAll(mediaGrabber.search(new File(fs)));
+						for (String fs : fileStrings) {
+							File f = new File(fs);
+							results.addAll(mediaGrabber.search(f));
+						}
 						listOutput.setListData(results.toArray(new MediaURL[results.size()]));
 						tp.dispose();
 					}

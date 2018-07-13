@@ -4,10 +4,22 @@ import java.io.File;
 import java.io.FileFilter;
 
 public class MediaFilter implements FileFilter {
+	
+	private String[] bannedExts = {
+			".json",
+			".url",
+			".txt",
+	};
 
 	@Override
 	public boolean accept(File arg0) {
-		return !(arg0.isDirectory() || arg0.toString().toLowerCase().endsWith(".json"));
+		if (arg0.isDirectory())
+			return false;
+		else
+			for (String e : bannedExts)
+				if (arg0.toString().toLowerCase().endsWith(e))
+					return false;
+		return true;
 	}
 
 }
