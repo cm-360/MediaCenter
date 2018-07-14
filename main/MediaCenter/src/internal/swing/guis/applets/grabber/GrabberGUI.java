@@ -114,6 +114,7 @@ public class GrabberGUI extends MediaCenterApplet {
 		btnImport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				final TextPrompt tp = new TextPrompt("Import From Files");
+				// Search each typed path
 				tp.getOKButton().addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						ArrayList<MediaURL> results = new ArrayList<MediaURL>();
@@ -123,6 +124,12 @@ public class GrabberGUI extends MediaCenterApplet {
 							results.addAll(mediaGrabber.search(f));
 						}
 						listOutput.setListData(results.toArray(new MediaURL[results.size()]));
+						tp.dispose();
+					}
+				});
+				// Close the prompt
+				tp.getCancelButton().addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
 						tp.dispose();
 					}
 				});
