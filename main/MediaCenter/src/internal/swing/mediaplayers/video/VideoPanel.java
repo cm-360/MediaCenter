@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
 import internal.swing.mediaplayers.PlayerPanel;
 import javafx.embed.swing.JFXPanel;
@@ -18,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.util.Duration;
 import utils.io.file.Download;
 import utils.io.file.MediaFile;
 import utils.io.file.text.TextReader;
@@ -30,6 +32,7 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 	
 	private CardLayout cl;
 	private Container parent;
+	private JSlider seekSlider;
 	
 	private JFXPanel fxPanel;
 	private Media fxMedia;
@@ -39,9 +42,10 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 	
 	private boolean sysDefault = false; // TODO read this from options
 	
-	public VideoPanel(CardLayout cl, final Container parent) {
+	public VideoPanel(CardLayout cl, final Container parent, JSlider seekSlider) {
 		this.cl = cl;
 		this.parent = parent;
+		this.seekSlider = seekSlider;
 		final File extFile = new File(System.getProperty("user.dir") + "/config/mediaplayers/video/extensions.txt");
 		if (extFile.exists())
 			supportedExtensions = new TextReader(extFile).read().replaceAll("\r", "").split("\\n");
@@ -100,6 +104,12 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 						else
 							fxView.fitWidthProperty().bind(fxScene.widthProperty());
 						fxView.setPreserveRatio(true);
+						seekSlider.setValue(0);
+						fxPlayer.setOnReady(new Runnable() {
+							public void run() {
+								seekSlider.setMaximum((int) fxPlayer.getStopTime().toMillis());
+							}
+						});
 					} catch (Exception e) {
 						e.printStackTrace();
 					} 
@@ -122,6 +132,10 @@ public class VideoPanel extends JPanel implements PlayerPanel {
 	
 	public void setVolume(double percent) {
 		fxPlayer.setVolume(percent);
+	}
+	
+	public void seek(int time) {
+		fxPlayer.seek(new Duration(time));
 	}
 	
 	// Status methods

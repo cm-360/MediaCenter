@@ -7,10 +7,12 @@ import java.awt.Image;
 import java.io.File;
 
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 
 import internal.swing.mediaplayers.PlayerPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 import utils.graphics.ImageTools;
 import utils.graphics.ImageTools.ScaleMode;
 import utils.io.file.Download;
@@ -25,15 +27,17 @@ public class MusicPanel extends JPanel implements PlayerPanel {
 	
 	private CardLayout cl;
 	private Container parent;
+	private JSlider seekSlider;
 	
 	private Image artwork;
 	private MediaPlayer mp;
 	
 	private ScaleMode scaleMode = ScaleMode.Fit; // Default
 	
-	public MusicPanel(CardLayout cl, Container parent) {
+	public MusicPanel(CardLayout cl, Container parent, JSlider seekSlider) {
 		this.cl = cl;
 		this.parent = parent;
+		this.seekSlider = seekSlider;
 		final File extFile = new File(System.getProperty("user.dir") + "/config/mediaplayers/music/extensions.txt");
 		if (extFile.exists())
 			supportedExtensions = new TextReader(extFile).read().replaceAll("\r", "").split("\\n");
@@ -74,6 +78,12 @@ public class MusicPanel extends JPanel implements PlayerPanel {
 			String mediaURI = m.getFilePath().toURI().toString();
 			if (isStopped() || !mp.getMedia().getSource().equals(mediaURI))
 				mp = new MediaPlayer(new Media(mediaURI));
+			seekSlider.setValue(0);
+			mp.setOnReady(new Runnable() {
+				public void run() {
+					seekSlider.setMaximum((int) mp.getStopTime().toMillis());
+				}
+			});
 		} else if (isStopped())
 			return;
 		mp.play();
@@ -92,6 +102,10 @@ public class MusicPanel extends JPanel implements PlayerPanel {
 			mp.stop();
 			mp = null;
 		}
+	}
+	
+	public void seek(int time) {
+		mp.seek(new Duration(time));
 	}
 	
 	public void setVolume(double percent) {

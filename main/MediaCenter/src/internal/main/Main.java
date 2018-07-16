@@ -91,6 +91,11 @@ public class Main {
 	private CardLayout cl_panelContent = new CardLayout(0, 0);
 	private ComponentMap panelContentMap;
 	
+	private JSlider sliderControlsSeek = new JSlider();
+	private JLabel lblControlsTitle;
+	private JLabel lblControlsStart;
+	private JLabel lblControlsEnd;
+	
 	private JPanel panelAppletsTab;
 	private JPanel panelApplets;
 	private CardLayout cl_panelApplets = new CardLayout(0, 0);
@@ -348,11 +353,11 @@ public class Main {
 		panelContent.add(panelContentImage, "image");
 		panelContentImage.setLayout(new BorderLayout(0, 0));
 		
-		MusicPanel panelContentMusic = new MusicPanel(cl_panelContent, panelContent);
+		MusicPanel panelContentMusic = new MusicPanel(cl_panelContent, panelContent, sliderControlsSeek);
 		panelContentMusic.setName("music");
 		panelContent.add(panelContentMusic, "music");
 		
-		VideoPanel panelContentVideo = new VideoPanel(cl_panelContent, panelContent);
+		VideoPanel panelContentVideo = new VideoPanel(cl_panelContent, panelContent, sliderControlsSeek);
 		panelContentVideo.setName("video");
 		panelContent.add(panelContentVideo, "video");
 		panelContentVideo.setLayout(new BoxLayout(panelContentVideo, BoxLayout.X_AXIS));
@@ -407,24 +412,37 @@ public class Main {
 		panelControls.add(panelControlsSeek, BorderLayout.CENTER);
 		panelControlsSeek.setLayout(new BorderLayout(0, 0));
 		
-		JSlider sliderControlsSeek = new JSlider();
+		sliderControlsSeek.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				if (playlist != null) {
+					PlayerPanel cp = playlist.getCurrentPlayer();
+					int value = sliderControlsSeek.getValue();
+					if (!cp.isStopped()) {
+						if (((Component) cp).getName().toLowerCase().equals("music"))
+							((MusicPanel) cp).seek(value);
+						else if (((Component) cp).getName().toLowerCase().equals("video"))
+							((VideoPanel) cp).seek(value);
+					} 
+				}
+			}
+		});
 		sliderControlsSeek.setMaximum(0);
 		sliderControlsSeek.setValue(0);
 		panelControlsSeek.add(sliderControlsSeek, BorderLayout.SOUTH);
 		
-		JLabel lblControlsTitle = new JLabel("Nothing is Playing");
+		lblControlsTitle = new JLabel("Nothing is Playing");
 		lblControlsTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblControlsTitle.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblControlsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panelControlsSeek.add(lblControlsTitle, BorderLayout.CENTER);
 		
-		JLabel lblControlsStart = new JLabel(" 0:00");
+		lblControlsStart = new JLabel(" 0:00");
 		lblControlsStart.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblControlsStart.setHorizontalTextPosition(SwingConstants.LEFT);
 		lblControlsStart.setHorizontalAlignment(SwingConstants.LEFT);
 		panelControlsSeek.add(lblControlsStart, BorderLayout.WEST);
 		
-		JLabel lblControlsEnd = new JLabel("0:00 ");
+		lblControlsEnd = new JLabel("0:00 ");
 		lblControlsEnd.setFont(new Font("Dialog", Font.PLAIN, 12));
 		lblControlsEnd.setHorizontalTextPosition(SwingConstants.RIGHT);
 		lblControlsEnd.setHorizontalAlignment(SwingConstants.RIGHT);
