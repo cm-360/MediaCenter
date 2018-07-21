@@ -1,4 +1,0 @@
-bmp
-gif
-jpe?g
-png
