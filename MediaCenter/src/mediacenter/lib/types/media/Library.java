@@ -75,7 +75,9 @@ public class Library {
 		for (MediaFile m : contents)
 			// Check each search criteria
 			if (authors.isEmpty() || authors.contains(m.getTag("author").toLowerCase().replaceAll(symbolRegex, "")))
-				if (tags.isEmpty() || new SimpleList<String>(m.getTag("tags").toLowerCase().replaceAll(symbolRegex, "").split(",")).containsAll(tags)) {
+				if (tags.isEmpty() || new SimpleList<String>(
+						m.getTag("tags").toLowerCase().replaceAll(symbolRegex, "").split("\\s*,\\s*"))
+								.containsAll(tags)) {
 					boolean containsAll = true;
 					for (String p : phrases)
 						if (!m.getTag("title").toLowerCase().replaceAll(symbolRegex, "").contains(p)) {
