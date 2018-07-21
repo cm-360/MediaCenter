@@ -1,13 +1,25 @@
 package mediacenter.lib.utils.media.players;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import mediacenter.lib.types.io.file.MediaFile;
+import mediacenter.lib.utils.graphics.ImageTools;
+import mediacenter.lib.utils.graphics.ImageTools.ScaleMode;
 import mediacenter.lib.utils.media.MediaPlayer;
 
 public class ImagePlayer extends JPanel implements MediaPlayer {
 	
 	private static final long serialVersionUID = 1L;
+	
+	private Image image;
+	private ScaleMode scaleMode = ScaleMode.Fit;
+	
+	private MediaFile file;
 
 	@Override
 	public String[] getSupportedFileExts() {
@@ -18,56 +30,51 @@ public class ImagePlayer extends JPanel implements MediaPlayer {
 
 	@Override
 	public void play(MediaFile m, Runnable onReady, Runnable onFinish) {
-		// TODO Auto-generated method stub
-		
+		try {
+			image = ImageIO.read(m.getMediaFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-		
+		// Images can't be paused
 	}
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void seek(int time) {
-		// TODO Auto-generated method stub
-		
+		// Images can't be sought through
 	}
 	
 	@Override
 	public int getMediaLength() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 0; // Images are still
 	}
 
 	@Override
 	public int getMediaTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 0; // Images are still
 	}
 
 	@Override
 	public MediaFile getMedia() {
-		// TODO Auto-generated method stub
-		return null;
+		return file;
 	}
 
 	@Override
 	public boolean isPaused() {
-		// TODO Auto-generated method stub
-		return false;
+		return false; // Images are still
 	}
 
 	@Override
 	public boolean isStopped() {
-		// TODO Auto-generated method stub
-		return false;
+		return image == null;
 	}
 
 	@Override
@@ -75,6 +82,20 @@ public class ImagePlayer extends JPanel implements MediaPlayer {
 		// Images don't have sound
 	}
 	
-	
+	// Paint method
+	@Override
+	public void paintComponent(Graphics g) {
+		g.clearRect(0, 0, getWidth(), getHeight());
+		if (image != null) {
+			if (scaleMode == ScaleMode.Stretch) {
+				g.drawImage(image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_AREA_AVERAGING), 0, 0,
+						getWidth(), getHeight(), null);
+			} else if (scaleMode == ScaleMode.Fill) {
+				ImageTools.centerImage(image, getBounds(), g, true);
+			} else if (scaleMode == ScaleMode.Fit) {
+				ImageTools.centerImage(image, getBounds(), g, false);
+			}
+		}
+	}
 	
 }
