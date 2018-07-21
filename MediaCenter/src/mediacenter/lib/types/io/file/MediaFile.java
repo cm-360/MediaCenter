@@ -50,9 +50,10 @@ public class MediaFile {
 			String json = dataFile.readContents();
 			if (!json.isEmpty()) {
 				data.clear();
-				HashMap<String, String> read;
+				HashMap<String, Object> read;
 				if ((read = gson.fromJson(json, HashMap.class)) != null)
-					data.put(read);
+					for (String key : read.keySet()) // For compatibility
+						data.put(key, read.get(key).toString().replaceAll("[^\\w\\s,\\.]", ""));
 				else
 					System.out.println("JSON could not be parsed"); // TODO json could not be read
 			} 
