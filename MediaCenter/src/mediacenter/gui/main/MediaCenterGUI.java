@@ -401,22 +401,20 @@ public class MediaCenterGUI {
 		downloadSearchBarField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent paramActionEvent) {
 				String[] queries = downloadSearchBarField.getText().split("\\s");
-				if (queries.length > 0) {
-					SimpleList<Download> results = new SimpleList<Download>();
-					for (Download d : DownloadManager.getDownloads()) {
-						// Check if URL contains all keywords
-						String dURLString = d.getSource().toString();
-						boolean containsAll = true;
-						for (String q : queries)
-							if (!dURLString.contains(q)) {
-								containsAll = false;
-								break;
-							}
-						if (containsAll)
-							results.add(d);
-					}
-					downloadSearchResultsList.setListData(results.asList().toArray(new Download[results.length()]));
+				SimpleList<Download> results = new SimpleList<Download>();
+				for (Download d : DownloadManager.getDownloads()) {
+					// Check if URL contains all keywords
+					String dURLString = d.getSource().toString();
+					boolean containsAll = true;
+					for (String q : queries)
+						if (!dURLString.contains(q)) {
+							containsAll = false;
+							break;
+						}
+					if (containsAll)
+						results.add(d);
 				}
+				downloadSearchResultsList.setListData(results.asList().toArray(new Download[results.length()]));
 			}
 		});
 		downloadSearchBarField.setComponentPopupMenu(new JTextFieldPopupMenu(downloadSearchBarField));
