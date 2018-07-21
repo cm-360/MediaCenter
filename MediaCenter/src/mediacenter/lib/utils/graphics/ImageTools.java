@@ -32,7 +32,7 @@ public class ImageTools {
 		double scale = (fill ? Math.max(xScale, yScale) : Math.min(xScale, yScale));
 		int width = (int) (scale * iw), height = (int) (scale * ih);
 		int x = (w - width) / 2, y = (h - height) / 2;
-		g.drawImage(image, x, y, width, height, null);
+		g.drawImage(image.getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING), x, y, width, height, null);
     }
 	
 }

@@ -126,7 +126,8 @@ public class MusicPlayer extends JPanel implements mediacenter.lib.utils.media.M
 		g.clearRect(0, 0, getWidth(), getHeight());
 		if (artwork != null) {
 			if (scaleMode == ScaleMode.Stretch) {
-				g.drawImage(artwork, 0, 0, getWidth(), getHeight(), null);
+				g.drawImage(artwork.getScaledInstance(getWidth(), getHeight(), Image.SCALE_AREA_AVERAGING), 0, 0,
+						getWidth(), getHeight(), null);
 			} else if (scaleMode == ScaleMode.Fill) {
 				ImageTools.centerImage(artwork, getBounds(), g, true);
 			} else if (scaleMode == ScaleMode.Fit) {
