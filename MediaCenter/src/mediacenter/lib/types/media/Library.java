@@ -8,11 +8,12 @@ import mediacenter.lib.types.io.file.MediaFile;
 import mediacenter.lib.types.simple.SimpleList;
 import mediacenter.lib.utils.io.file.FileSearcher;
 import mediacenter.lib.utils.io.file.filters.MediaFilter;
+import mediacenter.lib.utils.media.MediaPlayer;
 
 public class Library {
 	
 	public enum MediaType {
-		All, Images, Music, Videos, Playlists,
+		All, Images, Music, Videos,
 	};
 	
 	private SimpleList<MediaFile> contents = new SimpleList<MediaFile>();
@@ -42,7 +43,7 @@ public class Library {
 	 *            The search query
 	 * @return A list of all matching results
 	 */
-	public SimpleList<MediaFile> search(final String query) {
+	public SimpleList<MediaFile> search(final String query, final MediaType type, final Playlist playlist) {
 		SimpleList<MediaFile> results = new SimpleList<MediaFile>();
 		// Break down query string
 		String qClone = new String(query), group;
@@ -71,22 +72,49 @@ public class Library {
 		}
 		qClone = qClone.replaceAll(symbolRegex, "").replaceAll("\\s+", " ").trim(); // Cleanup
 		phrases.add(new SimpleList<String>(qClone.split("\\s"))); // Find remaining words
-		// Search through
-		for (MediaFile m : contents)
-			// Check each search criteria
-			if (authors.isEmpty() || authors.contains(m.getTag("author").toLowerCase().replaceAll(symbolRegex, "")))
-				if (tags.isEmpty() || new SimpleList<String>(
-						m.getTag("tags").toLowerCase().replaceAll(symbolRegex, "").split("\\s*,\\s*"))
-								.containsAll(tags)) {
-					boolean containsAll = true;
-					for (String p : phrases)
-						if (!m.getTag("title").toLowerCase().replaceAll(symbolRegex, "").contains(p)) {
-							containsAll = false;
-							break; // More iterations are not needed
-						}
-					if (containsAll) // All criteria met
-						results.add(m);
-				}
+		// Convert type enum to string
+		String typeString = "";
+		switch (type) {
+		default: // All
+			break;
+		case Images:
+			typeString = "image";
+			break;
+		case Music:
+			typeString = "music";
+			break;
+		case Videos:
+			typeString = "video";
+			break;
+		}
+		// Find player with given name
+		MediaPlayer mp = null;
+		for (MediaPlayer p : playlist.getPlayers())
+			if (p.getName().equalsIgnoreCase(typeString)) {
+				mp = p;
+				break;
+			}
+		// Search through library for matches
+		for (MediaFile m : contents) {
+			String mFileString = m.getMediaFile().toString().toLowerCase();
+			if ((mp == null) || new SimpleList<String>(mp.getSupportedFileExts())
+					.contains(mFileString.substring(mFileString.lastIndexOf(".") + 1))) {
+				// Check each search criteria
+				if (authors.isEmpty() || authors.contains(m.getTag("author").toLowerCase().replaceAll(symbolRegex, "")))
+					if (tags.isEmpty() || new SimpleList<String>(
+							m.getTag("tags").toLowerCase().replaceAll(symbolRegex, "").split("\\s*,\\s*"))
+									.containsAll(tags)) {
+						boolean containsAll = true;
+						for (String p : phrases)
+							if (!m.getTag("title").toLowerCase().replaceAll(symbolRegex, "").contains(p)) {
+								containsAll = false;
+								break; // More iterations are not needed
+							}
+						if (containsAll) // All criteria met
+							results.add(m);
+					}
+			}
+		}
 		System.gc(); // Clean up artifacts
 		return results;
 	}

@@ -74,6 +74,7 @@ public class MediaCenterGUI {
 	private SimpleList<File> libraryDirs;
 	private JPanel libraryPanel;
 	private JTextField librarySearchBarField;
+	private JComboBox<MediaType> librarySearchBarCombo;
 	private JList<MediaFile> librarySearchResultsList;
 	
 	private JLabel libraryEditContentLabelFilename;
@@ -173,7 +174,13 @@ public class MediaCenterGUI {
 		librarySearchBarField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				librarySearchResultsList
-						.setListData(new Vector<MediaFile>(library.search(librarySearchBarField.getText()).asList()));
+						.setListData(
+								new Vector<MediaFile>(library
+										.search(librarySearchBarField.getText(),
+												librarySearchBarCombo
+														.getItemAt(librarySearchBarCombo.getSelectedIndex()),
+												playerPanel.getPlaylist())
+										.asList()));
 			}
 		});
 		librarySearchBarField.setComponentPopupMenu(new JTextFieldPopupMenu(librarySearchBarField));
@@ -181,11 +188,17 @@ public class MediaCenterGUI {
 		librarySearchBarField.setBorder(null);
 		librarySearchBarField.setColumns(10);
 		
-		JComboBox<MediaType> librarySearchBarCombo = new JComboBox<MediaType>();
+		librarySearchBarCombo = new JComboBox<MediaType>();
 		librarySearchBarCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				librarySearchResultsList
-						.setListData(new Vector<MediaFile>(library.search(librarySearchBarField.getText()).asList()));
+						.setListData(
+								new Vector<MediaFile>(library
+										.search(librarySearchBarField.getText(),
+												librarySearchBarCombo
+														.getItemAt(librarySearchBarCombo.getSelectedIndex()),
+												playerPanel.getPlaylist())
+										.asList()));
 			}
 		});
 		librarySearchBarCombo.setModel(new DefaultComboBoxModel<MediaType>(MediaType.values()));
@@ -414,7 +427,7 @@ public class MediaCenterGUI {
 					if (containsAll)
 						results.add(d);
 				}
-				downloadSearchResultsList.setListData(results.asList().toArray(new Download[results.length()]));
+				downloadSearchResultsList.setListData(new Vector<Download>(results.asList()));
 			}
 		});
 		downloadSearchBarField.setComponentPopupMenu(new JTextFieldPopupMenu(downloadSearchBarField));
