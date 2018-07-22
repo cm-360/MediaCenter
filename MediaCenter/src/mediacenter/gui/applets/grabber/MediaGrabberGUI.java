@@ -345,7 +345,6 @@ public class MediaGrabberGUI extends JApplet {
 			}
 		});
 		grabberEditButtonPanel.add(grabberEditButtonDownload, BorderLayout.CENTER);
-
 	}
 	
 	public SimpleList<MediaURL> grab(String path) {
@@ -468,9 +467,12 @@ public class MediaGrabberGUI extends JApplet {
 		this.lib = lib;
 		this.libDirs = libDirs;
 		File addonDir = new File("./documents/applets/grabber/addons");
-		if (addonDir.exists())
+		if (addonDir.exists()) {
 			grabbers = JARLoader.getInstances(DomainGrabber.class, "mediagrabber.GrabMedia",
 					FileSearcher.listFiles(addonDir, new JARFilter(), true), new Object[] {});
+			for (DomainGrabber g : grabbers)
+				System.out.println(" - " + g.getSiteName());
+		}
 		else
 			addonDir.mkdirs();
 		for (DomainGrabber g : grabbers)
