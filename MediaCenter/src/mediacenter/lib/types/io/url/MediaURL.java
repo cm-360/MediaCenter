@@ -1,7 +1,6 @@
 package mediacenter.lib.types.io.url;
 
 import java.net.URL;
-import java.util.ArrayList;
 
 import mediacenter.lib.types.simple.SimpleList;
 import mediacenter.lib.types.simple.SimpleMap;
@@ -47,10 +46,6 @@ public class MediaURL implements Comparable<MediaURL> {
 			name += (" [" + imageQuality + "]");
 		return name
 				+ (filename.contains(".") ? String.format(" (%s)", filename.substring(filename.lastIndexOf("."))) : "");
-	}
-	
-	public void setFilename(String name) {
-		filename = name;
 	}
 	
 	// Comparable method
