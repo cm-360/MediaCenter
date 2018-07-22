@@ -5,6 +5,7 @@ import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
 
+import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -32,10 +33,15 @@ public class VideoPlayer extends JPanel implements mediacenter.lib.utils.media.M
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				if (fxMedia != null) {
-					if (fxMedia.getWidth() / getHeight() > 1) // TODO fix binding
-						fxView.fitHeightProperty().bind(fxScene.heightProperty());
-					else
-						fxView.fitWidthProperty().bind(fxScene.widthProperty());
+					Platform.runLater(new Runnable() {
+						public void run() {
+							fxPanel.setScene(fxScene = new Scene(new Group(fxView), getWidth(), getHeight()));
+							if (fxMedia.getWidth() / fxMedia.getHeight() < getWidth() / getHeight()) // TODO fix binding
+								fxView.fitHeightProperty().bind(fxScene.heightProperty());
+							else
+								fxView.fitWidthProperty().bind(fxScene.widthProperty());
+						}
+					});
 				}
 			}
 		});
@@ -54,15 +60,20 @@ public class VideoPlayer extends JPanel implements mediacenter.lib.utils.media.M
 			String mediaURI = (file = m).getMediaFile().toURI().toString();
 			if (isStopped() || !fxPlayer.getMedia().getSource().equals(mediaURI)) {
 				fxView = new MediaView(fxPlayer = new MediaPlayer(fxMedia = new Media(mediaURI)));
-				fxPanel.setScene(fxScene = new Scene(new Group(fxView), getWidth(), getHeight()));
-				if (fxMedia.getHeight() / getHeight() > 1) // TODO fix binding
-					fxView.fitHeightProperty().bind(fxScene.heightProperty());
-				else
-					fxView.fitWidthProperty().bind(fxScene.widthProperty());
-				fxView.setPreserveRatio(true);
-				fxPlayer.setVolume(volume);
+				Runnable onReadyNew = new Runnable() {
+					public void run() {
+						fxPanel.setScene(fxScene = new Scene(new Group(fxView), getWidth(), getHeight()));
+						if (fxMedia.getWidth() / fxMedia.getHeight() < getWidth() / getHeight()) // TODO fix binding
+							fxView.fitHeightProperty().bind(fxScene.heightProperty());
+						else
+							fxView.fitWidthProperty().bind(fxScene.widthProperty());
+						fxView.setPreserveRatio(true);
+						fxPlayer.setVolume(volume);
+						onReady.run();
+					}
+				};
+				fxPlayer.setOnReady(onReadyNew);
 			}
-			fxPlayer.setOnReady(onReady);
 		} else if (isStopped())
 			return;
 		fxPlayer.play();
