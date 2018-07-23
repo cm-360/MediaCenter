@@ -35,7 +35,7 @@ public class Download {
 			public void run() {
 				synchronized (thread) {
 					try {
-						hash = getChecksumAndWrite(MessageDigest.getInstance("SHA-512"), source, destination);
+						hash = getChecksumAndWrite(MessageDigest.getInstance("SHA-256"), source, destination);
 						if (onFinish != null) {
 							for (Runnable r : onFinish)
 								r.run();
