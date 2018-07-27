@@ -409,6 +409,13 @@ public class MediaCenterGUI {
 		downloadPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		contentTabs.addTab("Downloads", null, downloadPanel, null);
 		downloadPanel.setLayout(new BorderLayout(0, 0));
+		downloadPanel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				for (ActionListener al : downloadSearchBarField.getActionListeners())
+					al.actionPerformed(new ActionEvent(downloadSearchResultsList, 0, ""));
+			}
+		});
 		
 		downloadSearchBarField = new JTextField();
 		downloadSearchBarField.addActionListener(new ActionListener() {
@@ -440,13 +447,6 @@ public class MediaCenterGUI {
 		downloadPanel.add(downloadSearchResultsPane, BorderLayout.CENTER);
 		
 		downloadSearchResultsList = new JList<Download>();
-		downloadSearchResultsList.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentShown(ComponentEvent arg0) {
-				for (ActionListener al : downloadSearchBarField.getActionListeners())
-					al.actionPerformed(new ActionEvent(downloadSearchResultsList, 0, ""));
-			}
-		});
 		downloadSearchResultsList.setBorder(null);
 		downloadSearchResultsList.setComponentPopupMenu(new DownloadSearchResultsListPopup());
 		downloadSearchResultsPane.setViewportView(downloadSearchResultsList);
