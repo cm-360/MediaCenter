@@ -36,10 +36,14 @@ public class VideoPlayer extends JPanel implements mediacenter.lib.utils.media.M
 					Platform.runLater(new Runnable() {
 						public void run() {
 							fxPanel.setScene(fxScene = new Scene(new Group(fxView), getWidth(), getHeight()));
-							if (fxMedia.getWidth() / fxMedia.getHeight() < getWidth() / getHeight()) // TODO fix binding
-								fxView.fitHeightProperty().bind(fxScene.heightProperty());
-							else
+							try {
+								if (fxMedia.getWidth() / fxMedia.getHeight() < getWidth() / getHeight())
+									fxView.fitHeightProperty().bind(fxScene.heightProperty());
+								else
+									fxView.fitWidthProperty().bind(fxScene.widthProperty());
+							} catch (ArithmeticException e) { // Divide by zero
 								fxView.fitWidthProperty().bind(fxScene.widthProperty());
+							}
 						}
 					});
 				}
@@ -63,10 +67,14 @@ public class VideoPlayer extends JPanel implements mediacenter.lib.utils.media.M
 				Runnable onReadyNew = new Runnable() {
 					public void run() {
 						fxPanel.setScene(fxScene = new Scene(new Group(fxView), getWidth(), getHeight()));
-						if (fxMedia.getWidth() / fxMedia.getHeight() < getWidth() / getHeight()) // TODO fix binding
-							fxView.fitHeightProperty().bind(fxScene.heightProperty());
-						else
+						try {
+							if (fxMedia.getWidth() / fxMedia.getHeight() < getWidth() / getHeight())
+								fxView.fitHeightProperty().bind(fxScene.heightProperty());
+							else
+								fxView.fitWidthProperty().bind(fxScene.widthProperty());
+						} catch (ArithmeticException e) { // Divide by zero
 							fxView.fitWidthProperty().bind(fxScene.widthProperty());
+						}
 						fxView.setPreserveRatio(true);
 						fxPlayer.setVolume(volume);
 						onReady.run();
