@@ -364,7 +364,7 @@ public class MediaGrabberGUI extends JApplet {
 						exts.addAll(Arrays.asList(p.getSupportedFileExts()));
 					// Search for media files
 					Matcher urlMatcher = Pattern.compile(
-							"(?:https?:\\/\\/)(?:(?:[\\w-]+\\.)+[\\w-]+)(?:\\/[\\w-]+)+(?:\\.[\\w-]+)+(?:\\?(?:[\\w-]+(?:=[\\w-]+&?)?)+)?")
+							"(?:https?:\\/\\/)?(?:(?:[\\w-]+\\.)+[\\w-]+)(?:\\/[\\w-]+)+(?:\\.[\\w-]+)+(?:\\?(?:[\\w-]+(?:=[\\w-]+&?)?)+)?")
 							.matcher(html);
 					while (urlMatcher.find()) {
 						// Make sure the file to download has a legal, recognized extension
@@ -377,6 +377,8 @@ public class MediaGrabberGUI extends JApplet {
 								title.append(titleMatcher.group().replaceAll("[^\\w\\s]", "") + " - ");
 							title.append(String.format("%s.%s", StringTools.toTitleCase(
 									group.substring(group.lastIndexOf("/") + 1, group.lastIndexOf("."))), ext));
+							if (!group.toLowerCase().startsWith("http"))
+								group = "http://" + group;
 							results.add(
 									new MediaURL(new URL(group), title.toString(), guessData(lib, title.toString())));
 						}
