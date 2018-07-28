@@ -34,14 +34,16 @@ public class MediaURL implements Comparable<MediaURL> {
 	
 	@Override
 	public String toString() {
-		String name = filename.substring(0, filename.lastIndexOf("."));
+		String name = filename.substring(0, filename.lastIndexOf(".")), tags = data.get("tags");
 		if (imageQuality.isEmpty()) {
-			SimpleList<String> tagsList = new SimpleList<String>(data.get("tags").split("\\s*,\\s*"));
-			for (String s : tagsList)
-				if (s.replaceAll("[_-]", "").matches("\\d+[PpKk]")) {
-					name += (" [" + (imageQuality = s) + "]");
-					break;
-				}
+			if (!(tags == null)) {
+				SimpleList<String> tagsList = new SimpleList<String>(tags.split("\\s*,\\s*"));
+				for (String s : tagsList)
+					if (s.replaceAll("[_-]", "").matches("\\d+[PpKk]")) {
+						name += (" [" + (imageQuality = s) + "]");
+						break;
+					}
+			}
 		} else
 			name += (" [" + imageQuality + "]");
 		return name
