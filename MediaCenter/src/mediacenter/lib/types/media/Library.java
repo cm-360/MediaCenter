@@ -102,7 +102,7 @@ public class Library {
 				// Check each search criteria
 				if (authors.isEmpty() || authors.contains(m.getTag("author").toLowerCase().replaceAll(symbolRegex, "")))
 					if (tags.isEmpty() || new SimpleList<String>(
-							m.getTag("tags").toLowerCase().replaceAll(symbolRegex, "").split("\\s*,\\s*"))
+							m.getTag("tags").toLowerCase().replaceAll("[^\\w\\s,]", "").split("\\s*,\\s*"))
 									.containsAll(tags)) {
 						boolean containsAll = true;
 						for (String p : phrases)
