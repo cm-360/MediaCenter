@@ -364,7 +364,7 @@ public class MediaGrabberGUI extends JApplet {
 						exts.addAll(Arrays.asList(p.getSupportedFileExts()));
 					// Search for media files
 					Matcher urlMatcher = Pattern.compile(
-							"(?:https?:\\/\\/)?(?:(?:[\\w-]+\\.)+[\\w-]+)(?:\\/[\\w-]+)+(?:\\.[\\w-]+)+(?:\\?(?:[\\w-]+(?:=[\\w-]+&?)?)+)?")
+							"(?:https?:\\/\\/)?(?:(?:[\\w-]+\\.)+[\\w-]+)(?:\\/[\\w\\.-]+)+(?:\\.[\\w-]+)+(?:\\?(?:[\\w\\.-]+(?:=[\\w\\.-]+&?)?)+)?")
 							.matcher(html);
 					while (urlMatcher.find()) {
 						// Make sure the file to download has a legal, recognized extension
