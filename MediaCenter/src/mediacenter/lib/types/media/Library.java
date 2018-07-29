@@ -51,21 +51,21 @@ public class Library {
 		Matcher queryMatcher;
 		// Find authors
 		SimpleList<String> authors = new SimpleList<String>();
-		queryMatcher = Pattern.compile(String.format(paramRegex, "@", quoteRegex)).matcher(query);
+		queryMatcher = Pattern.compile(String.format(paramRegex, "@", quoteRegex)).matcher(qClone);
 		while (queryMatcher.find()) {
 			authors.add((group = queryMatcher.group()).toLowerCase().replaceAll(symbolRegex, ""));
 			qClone = qClone.replace(group, ""); // Remove from query string
 		}
 		// Find tags
 		SimpleList<String> tags = new SimpleList<String>();
-		queryMatcher = Pattern.compile(String.format(paramRegex, "#", quoteRegex)).matcher(query);
+		queryMatcher = Pattern.compile(String.format(paramRegex, "#", quoteRegex)).matcher(qClone);
 		while (queryMatcher.find()) {
 			tags.add((group = queryMatcher.group()).toLowerCase().replaceAll(symbolRegex, ""));
 			qClone = qClone.replace(group, ""); // Remove from query string
 		}
 		// Find exact phrases
 		SimpleList<String> phrases = new SimpleList<String>();
-		queryMatcher = Pattern.compile(quoteRegex).matcher(query);
+		queryMatcher = Pattern.compile(quoteRegex).matcher(qClone);
 		while (queryMatcher.find()) {
 			phrases.add((group = queryMatcher.group()).toLowerCase().replaceAll(symbolRegex, ""));
 			qClone = qClone.replace(group, ""); // Remove from query string
