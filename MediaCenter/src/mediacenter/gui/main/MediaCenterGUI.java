@@ -644,12 +644,6 @@ public class MediaCenterGUI {
 							cp.dispose();
 						}
 					});
-					// Cancel button
-					cp.getCancelButton().addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ae) {
-							cp.dispose();
-						}
-					});
 					cp.setAlwaysOnTop(true);
 					cp.setVisible(true);
 				}
