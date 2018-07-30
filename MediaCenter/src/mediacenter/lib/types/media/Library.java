@@ -1,6 +1,7 @@
 package mediacenter.lib.types.media;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,6 +117,7 @@ public class Library {
 			}
 		}
 		System.gc(); // Clean up artifacts
+		Collections.sort(results.asList());
 		return results;
 	}
 	

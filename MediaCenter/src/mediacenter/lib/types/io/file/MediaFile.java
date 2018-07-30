@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 
 import mediacenter.lib.types.simple.SimpleMap;
 
-public class MediaFile {
+public class MediaFile implements Comparable<MediaFile> {
 	
 	private File mediaFile;
 	private TextFile dataFile;
@@ -91,6 +91,11 @@ public class MediaFile {
 	public String toString() {
 		String name = mediaFile.getName();
 		return String.format("%s (%s)", getTag("title"), name.toLowerCase().substring(name.lastIndexOf(".")));
+	}
+
+	@Override
+	public int compareTo(MediaFile arg0) {
+		return getTag("title").toLowerCase().compareTo(arg0.getTag("title").toLowerCase());
 	}
 	
 }

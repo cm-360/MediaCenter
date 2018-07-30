@@ -20,6 +20,8 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -116,7 +118,9 @@ public class MediaCenterGUI {
 						libraryDirsFile.createNewFile();
 					}
 					window.library.refresh(window.libraryDirs);
-					window.librarySearchResultsList.setListData(new Vector<MediaFile>(window.library.getContents().asList()));
+					ArrayList<MediaFile> library = window.library.getContents().asList();
+					Collections.sort(library);
+					window.librarySearchResultsList.setListData(new Vector<MediaFile>(library));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
