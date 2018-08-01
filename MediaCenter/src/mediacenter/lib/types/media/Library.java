@@ -30,8 +30,12 @@ public class Library {
 	public void refresh(final SimpleList<File> dirs) {
 		contents.clear();
 		SimpleList<File> results = new SimpleList<File>();
-		for (File d : dirs)
-			results.add(FileSearcher.listFiles(d, new MediaFilter(), true));
+		for (File d : dirs) {
+			if (d.exists())
+				results.add(FileSearcher.listFiles(d, new MediaFilter(), true));
+			else
+				d.mkdirs();
+		}
 		for (File f : results)
 			contents.add(new MediaFile(f));
 		System.gc(); // Clean up artifacts
