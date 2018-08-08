@@ -396,7 +396,7 @@ public class MediaGrabberGUI extends JApplet {
 						if (mf.accept(f)) // Import media file
 							results.add(grab(f.toString()));
 						else { // Try as a text file
-							String fName = f.getName(), fText = new SimpleTextReader(file).read();
+							String fName = f.getName(), fText = new SimpleTextReader(f).read();
 							if (fName.endsWith(".url")) { // Internet shortcut
 								Matcher urlMatcher = Pattern.compile("(?<=URL=)[^\\n\\r]+").matcher(fText);
 								while (urlMatcher.find())
