@@ -450,8 +450,8 @@ public class MediaGrabberGUI extends JApplet {
 		// Check title for tags
 		SimpleList<String> tags = new SimpleList<String>();
 		for (final String ts : lib.getDataValues("tags"))
-			for (final String s : ts.split(",")) {
-				String s2 = StringTools.removeSpecialChars(s).toLowerCase().replaceAll("\\s+", " ");
+			for (final String s : ts.split("\\s*,\\s*")) {
+				String s2 = StringTools.removeSpecialChars(s).toLowerCase().replaceAll("\\s", "");
 				if (!(s2.equals("unknown") || tags.contains(s2)))
 					tags.add(s2);
 			}
