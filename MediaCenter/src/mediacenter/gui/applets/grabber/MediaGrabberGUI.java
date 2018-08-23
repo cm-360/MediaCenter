@@ -452,12 +452,17 @@ public class MediaGrabberGUI extends JApplet {
 		for (final String ts : lib.getDataValues("tags"))
 			for (final String s : ts.split("\\s*,\\s*")) {
 				String s2 = StringTools.removeSpecialChars(s).toLowerCase().replaceAll("\\s", "");
-				if (!(s2.equals("unknown") || tags.contains(s2)))
+				if (!(s2.equals("unknown") || s2.isEmpty() || tags.contains(s2)))
 					tags.add(s2);
 			}
 		for (final String s : tags) {
-			if (!s.equals("unknown") && nameClone.contains(s))
-				results.put("tags", String.format("%s, ", results.get("tags"), s));
+			if (nameClone.contains(s)) {
+				String old = results.get("tags");
+				if (old == null)
+					results.put("tags", s);
+				else
+					results.put("tags", String.format("%s, %s", old, s));
+			}
 		}
 		// Set title tag last
 		results.put("title",
